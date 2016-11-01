@@ -31,29 +31,16 @@ public class Endpoint {
     @POST
     @Path("/ttt")
     @Consumes(MediaType.APPLICATION_JSON)
-    //@Produces("application/json")
-    public Response processPost(Payload payload) { /*
-            @QueryParam("token") String token,  //verify from correct Slack team
-            @QueryParam("team_id") String team_id,
-            @QueryParam("team_domain") String team_domain,
-            @QueryParam("channel_id") String channel_id,
-            @QueryParam("channel_name") String channel_name,
-            @QueryParam("user_id") String user_id,
-            @QueryParam("user_name") String user_name,
-            @QueryParam("command") String command,  //e.g. /ttt
-            @QueryParam("text") String text,    //argument to slash call (command)
-            @QueryParam("response_url") String response_url
-            ) {*/
-        return Response.ok("everything is fine " + payload.getToken()).build();
-        /*
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response processPost(Payload payload) {
         try {
-            response_uri = new URI(response_url);
+            response_uri = new URI(payload.getResponse_url());
 
             br = new BufferedReader(new FileReader(TOKEN_FILE_PATH));
             String TOKEN = br.readLine();
             br.close();
 
-            if (!TOKEN.equals(token)) { //invalid Slack token
+            if (!TOKEN.equals(payload.getToken())) { //invalid Slack token
                 return Response.status(Status.UNAUTHORIZED)
                         .location(response_uri)
                         .build();
@@ -71,6 +58,5 @@ public class Endpoint {
         }
 
         return null;
-        */
     }
 }
