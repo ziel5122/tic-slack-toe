@@ -1,4 +1,5 @@
 .idea
 target
-tic-slack-toe.iml
+*.iml
 ttt-token.txt
+api-test-token.txt

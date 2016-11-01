@@ -1,7 +1,5 @@
 package slack.data;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Wraps the data coming from Slack
  */
