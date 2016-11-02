@@ -1,7 +1,6 @@
 package slack.api;
 
 import slack.data.Channel;
-import slack.data.UserList;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -14,6 +13,7 @@ public class Channels {
         Client client = ClientBuilder.newClient();
         Channel channel = client.target("https://slack.com/api/channels.info")
                 .queryParam("token", System.getProperty("API_TEST_TOKEN"))
+                .queryParam("channel", channel_id)
                 .request(MediaType.APPLICATION_JSON)
                 .get(Channel.class);
 

@@ -1,63 +1,31 @@
 package slack.data;
 
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
-    private boolean deleted;
-    private boolean has_2fa;
-    private boolean is_admin;
-    private boolean is_bot;
-    private boolean is_owner;
-    private boolean is_primary_owner;
-    private boolean is_restricted;
-    private boolean is_ultra_restricted;
+    private boolean ok;
 
-    private Map<String, Object> profile;
+    private String error;
 
-    private String color;
-    private String id;
-    private String name;
-    private String real_name;
-    private String status;
-    private String team_id;
-    private String tz;
-    private String tz_label;
-    private String tz_offset;
+    private UserInfo user;
 
-    public String getColor() { return color; }
-    
-    public boolean getDeleted() { return deleted; }
+    public boolean getDeleted() { return user.getDeleted(); }
 
-    public boolean getHas_2fa() { return has_2fa; }
+    public String getError() { return error; }
 
-    public String getId() { return id; }
-    
-    public boolean getIs_admin() { return is_admin; }
+    public String getId() { return user.getId(); }
 
-    public boolean getIs_bot() { return is_bot; }
+    public boolean getIs_bot() { return user.getIs_bot(); }
 
-    public boolean getIs_owner() { return is_owner; }
-    
-    public boolean getIs_primary_owner() { return is_primary_owner; }
-    
-    public boolean getIs_restricted() { return is_restricted; }
-    
-    public boolean getIs_ultra_restricted() { return is_ultra_restricted; }
-    
-    public String getName() { return name; }
-    
-    public Map<String, Object> getProfile() { return profile; }
-    
-    public String getReal_name() { return real_name; }
+    public boolean getIs_restricted() { return user.getIs_restricted(); }
 
-    public String getStatus() { return status; }
+    public boolean getIs_ultra_restricted() { return user.getIs_ultra_restricted(); }
 
-    public String getTeam_id() { return team_id; }
+    public String getName() { return user.getName(); }
 
-    public String getTz() { return tz; }
+    public boolean getOk() { return ok; }
 
-    public String getTz_label() { return tz_label; }
-
-    public String getTz_offset() { return tz_offset; }
+    public UserInfo getUser() { return user; }
 }

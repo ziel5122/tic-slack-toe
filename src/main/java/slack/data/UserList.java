@@ -1,18 +1,13 @@
 package slack.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserList {
 
-    private boolean ok;
+    private List<UserInfo> members;
 
-    private int cache_ts;
-
-    private List<User> members;
-
-    public int getCache_ts() { return cache_ts; }
-
-    public List<User> getMembers() { return members; }
-
-    public boolean getOk() { return ok; }
+    public List<UserInfo> getMembers() { return members; }
 }
