@@ -1,26 +1,24 @@
 package ttt.rest;
 
-import org.restlet.data.Form;
-import org.restlet.resource.ClientResource;
-import slack.data.Payload;
+import slack.data.User;
+import slack.data.UserList;
+import ttt.game.Core;
+import ttt.messages.Info;
 
 import javax.ws.rs.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.Buffer;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response.Status;
+
+import com.google.gson.Gson;
 
 /**
  * All messages involving /ttt come to this endpoint
@@ -32,7 +30,7 @@ public class Endpoint {
     private String TOKEN;
 
     private static final String API_TOKEN_PATH = "api-test-token.txt";
-    private static final String USER_INFO_URL = "https://slack.com/api/users.info"
+    private static final String USER_INFO_URL = "https://slack.com/api/users.info";
     private static final String TOKEN_FILE_PATH = "ttt-token.txt";
 
     private BufferedReader br;
@@ -45,43 +43,33 @@ public class Endpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response processPost(
             @FormParam("channel_id") String channel_id,
+            @FormParam("team_domain") String team_domain,
             @FormParam("text") String text,
-            @FormParam("token") String token) {
-        try {
-            br = new BufferedReader(new FileReader(TOKEN_FILE_PATH));
-            TOKEN = br.readLine();
+            @FormParam("token") String token,
+            @FormParam("user_id") String user_id) {
 
-            br = new BufferedReader(new FileReader(API_TOKEN_PATH));
-            API_TEST_TOKEN = br.readLine();
-            br.close();
-
-            if (TOKEN.equals(token)) { //invalid Slack token
-                return Response.ok("Token authorized from file").build();
-            } else {
-                return Response.status(Status.UNAUTHORIZED)
-                        .build();
-            }
-
-        } catch (FileNotFoundException e) { //token file does not exist
-            TOKEN = System.getProperty("TTT_TOKEN");
-            if (!TOKEN.equals(token)) { //invalid Slack token
-                return Response.status(Status.UNAUTHORIZED)
-                        .build();
-            }
-            API_TEST_TOKEN = System.getProperty("API_TEST_TOKEN");
-        } catch (IOException e) {   //token file is empty
-            return Response.status(Status.UNAUTHORIZED)
-                    .build();
+        // authorize post
+        if (!TOKEN.equals(System.getProperty("TTT_TOKEN"))) {   //post from invalid sender
+            return Response.status(Status.UNAUTHORIZED).build();
         }
 
-        if (text.charAt(0) == '@') {
-            Form form = new Form();
-            form.add("token", API_TEST_TOKEN);
-
-            ClientResource resource = new ClientResource("https://slack.com/api/users.list");
-            Response response = resource.post(form.getWebRepresentation());
-
-            HttpURLConnection user_info = new H
+        // check if help
+        if (text.equalsIgnoreCase("help")) {    //show user list of commands
+            return Response.ok(Info.HELP.toString()).build();
         }
+
+        // check if "text" is valid username before searching for it
+        if (text.matches("@[A-Za-z0-9]+")) {
+            return Core.challenge(user_id, text.substring(1), channel_id);
+        }
+
+        return Response.ok("two conditionals not triggered " + team_domain).build();
+/*
+            Client client = ClientBuilder.newClient();
+            UserList entity = client.target("https://slack.com/api/users.list")
+                    .queryParam("token", API_TEST_TOKEN)
+                    .request(MediaType.APPLICATION_JSON)
+                    .get(UserList.class);
+        */
     }
 }
