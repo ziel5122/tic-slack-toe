@@ -29,22 +29,11 @@ import com.google.gson.Gson;
 @Path("/")
 public class Endpoint {
 
-    private String API_TEST_TOKEN;
-    private String TOKEN;
-
-    private static final String API_TOKEN_PATH = "api-test-token.txt";
-    private static final String USER_INFO_URL = "https://slack.com/api/users.info";
-    private static final String TOKEN_FILE_PATH = "ttt-token.txt";
-
-    private BufferedReader br;
-
-    private HashSet<String> channels_with_ganme;
-
     @POST
     @Path("/ttt")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response processPost(MultivaluedMap<String, String> payload) {
+        // see https://api.slack.com/slash-commands for payload description
 
         // authorize post
         if (!payload.getFirst("token").equals(System.getProperty("TTT_TOKEN"))) {   //post from invalid sender
@@ -53,6 +42,11 @@ public class Endpoint {
 
         String text = payload.getFirst("text");
 
+        // display current state if no arguments ("text" is empty)
+        if (text.isEmpty()) {
+            return Core.displayCurrentState(payload);
+        }
+
         // check if help
         if (text.equalsIgnoreCase("help")) {    //show user list of commands
             return Response.ok(Info.HELP.toString()).build();
@@ -60,7 +54,13 @@ public class Endpoint {
 
         // check if "text" is valid username before searching for it
         if (text.matches("@[A-Za-z0-9]+")) {
-            return Core.challenge(payload.getFirst("user_id"), text.substring(1), payload.getFirst("channel_id"));
+            payload.putSingle("text", text.substring(1));
+            return Core.challenge(payload);
+        }
+
+        // check for two digit number (desired move)
+        if (text.matches("[0-9][0-9]")) {
+            return Core.move(payload);
         }
 
         return Response.ok("two conditionals not triggered " + payload.getFirst("team_domain")).build();

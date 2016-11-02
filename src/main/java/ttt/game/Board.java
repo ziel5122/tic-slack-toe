@@ -17,6 +17,16 @@ public class Board {
         return ' ';
     }
 
+    public boolean move(String square_coords) {
+        int two_digit = Integer.parseInt(square_coords);
+        int row = two_digit / 10;
+        int col = two_digit % 10;
+
+        board[row][col] = 1;
+
+        return true;
+    }
+
     @Override
     public String toString() {
         String board_string = "```-------------\n";
