@@ -5,27 +5,27 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
-    private boolean ok;
+    private boolean deleted;
+    private boolean is_bot;
+    private boolean is_restricted;
+    private boolean is_ultra_restricted;
 
-    private String error;
+    private String id;
+    private String name;
 
-    private UserInfo user;
+    public boolean getDeleted() { return deleted; }
 
-    public boolean getDeleted() { return user.getDeleted(); }
+    public String getId() { return id; }
 
-    public String getError() { return error; }
+    public boolean getIs_bot() { return is_bot; }
 
-    public String getId() { return user.getId(); }
+    public boolean getIs_restricted() { return is_restricted; }
 
-    public boolean getIs_bot() { return user.getIs_bot(); }
+    public boolean getIs_ultra_restricted() { return is_ultra_restricted; }
 
-    public boolean getIs_restricted() { return user.getIs_restricted(); }
+    public String getName() { return name; }
 
-    public boolean getIs_ultra_restricted() { return user.getIs_ultra_restricted(); }
-
-    public String getName() { return user.getName(); }
-
-    public boolean getOk() { return ok; }
-
-    public UserInfo getUser() { return user; }
+    public boolean isValid() {
+        return !deleted && !is_bot && !is_restricted && !is_ultra_restricted;
+    }
 }

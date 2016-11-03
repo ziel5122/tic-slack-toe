@@ -58,11 +58,17 @@ public class Endpoint {
             return Core.challenge(payload);
         }
 
+        // check if user surrenders
+        if (text.equalsIgnoreCase("gg")) {
+            return Core.concede(payload);
+        }
+
         // check for two digit number (desired move)
         if (text.matches("[0-9][0-9]")) {
             return Core.move(payload);
         }
 
-        return Response.ok("two conditionals not triggered " + payload.getFirst("team_domain")).build();
+        return Response.ok("Not a valid command.\n" +
+            "Enter /ttt help for a list of commands.").build();
     }
 }

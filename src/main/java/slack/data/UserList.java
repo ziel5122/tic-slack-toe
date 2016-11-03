@@ -7,7 +7,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserList {
 
-    private List<UserInfo> members;
+    private List<User> members;
 
-    public List<UserInfo> getMembers() { return members; }
+    public List<User> getMembers() { return members; }
 }
