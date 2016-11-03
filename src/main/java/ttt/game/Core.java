@@ -25,8 +25,8 @@ public class Core {
     public static Response challenge(MultivaluedMap<String, String> payload) {
         String channel_id = payload.getFirst("channel_id");
         if (USERS.containsKey(channel_id)) {
-            return Response.ok("ERROR: Game in progress." +
-                    ".\nEnter /ttt to see the current state or /ttt help for a list of commands.").build();
+            return Response.ok(Info.jsonWrap("ERROR: Game in progress." +
+                    ".\nEnter /ttt to see the current state or /ttt help for a list of commands.")).build();
         }
 
         String challenger_id = payload.getFirst("user_id");
@@ -39,12 +39,12 @@ public class Core {
             VALUES.put(channel_id, new Integer[]{1, -1});
             String response_string = "NEW GAME\n";
             response_string += board;
-            response_string += "\n" + payload.getFirst("user_name") + " will go first!";
-            return Response.ok(response_string).build();
+            response_string += "\n" + payload.getFirst("user_name") + " will go first! (" + Board.getLetter(1) + ")";
+            return Response.ok(Info.jsonWrap(response_string)).build();
         }
 
-        return Response.ok("ERROR: Invalid user.\n" +
-            "Enter @ for a list of users.").build();
+        return Response.ok(Info.jsonWrap("ERROR: Invalid user.\n" +
+            "Enter @ for a list of users.")).build();
     }
 
     public static Response concede(MultivaluedMap<String, String> payload) {
@@ -57,10 +57,10 @@ public class Core {
 
         String user_id = payload.getFirst("user_id");
         String winner;
-        if (user_ids[0].equals(user_id)) {
-            winner = Users.getUserName(user_ids[1]);
-        } else if (user_ids[1].equals(user_id)) {
-            winner = Users.getUserName(user_ids[0]);
+        if (user_ids[0].equalsIgnoreCase(user_id)) {
+            winner = user_ids[1];
+        } else if (user_ids[1].equalsIgnoreCase(user_id)) {
+            winner = user_ids[0];
         } else {
             return Response.ok().build();
         }
@@ -75,15 +75,16 @@ public class Core {
     public static Response displayCurrentState(MultivaluedMap<String, String> payload) {
         String channel_id = payload.getFirst("channel_id");
         String[] user_ids = USERS.get(channel_id);
+        Integer[] values = VALUES.get(channel_id);
 
         if (user_ids == null) {
-            return Response.ok("No active board in this channel.\n"
-                    + "Enter /ttt help for a list of commands.").build();
+            return Response.ok(Info.jsonWrap("No active board in this channel.\n"
+                    + "Enter /ttt help for a list of commands.")).build();
         }
 
         Board board = BOARDS.get(channel_id);
 
-        return Response.ok(Info.wrapBoard(board.toString(), user_ids).toString()).build();
+        return Response.ok(Info.wrapBoard(board.toString(), user_ids, values[0]).toString()).build();
     }
 
     public static void endGame(String channel_id) {
@@ -97,8 +98,8 @@ public class Core {
         Board board = BOARDS.get(channel_id);
 
         if (board == null) {
-            return Response.ok("No active board in this channel.\n"
-                    + "Enter /ttt help for a list of commands.").build();
+            return Response.ok(Info.jsonWrap("No active board in this channel.\n"
+                    + "Enter /ttt help for a list of commands.")).build();
         }
 
         String user_id = payload.getFirst("user_id");
@@ -114,7 +115,7 @@ public class Core {
             return displayCurrentState(payload);
         }
 
-        return Response.ok("Invalid move").build();
+        return Response.ok(Info.jsonWrap("Invalid move")).build();
     }
 
     private static void nextTurn(String channel_id) {

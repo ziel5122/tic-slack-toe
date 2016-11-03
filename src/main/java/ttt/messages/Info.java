@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 public class Info {
 
     public static final JsonObject HELP = Json.createObjectBuilder()
+            .add("response_type", "in_channel")
             .add("text", "The following are commands for tic-Slack-toe")
             .add("attachments", Json.createArrayBuilder()
                 .add(Json.createObjectBuilder()
@@ -30,12 +31,18 @@ public class Info {
                     .add("color", "#439FE0"))
             ).build();
 
+    public static String jsonWrap(String string) {
+        return Json.createObjectBuilder()
+                .add("response_type", "in_channel")
+                .add("text", string).build().toString();
+    }
+
     public static Response scratch(Board board) {
         String response_string = "Game ends in a scratch!\n";
         response_string += "Final board state:\n";
         response_string += board.toString();
 
-        return Response.ok(response_string).build();
+        return Response.ok(jsonWrap(response_string)).build();
     }
 
     public static Response win(String user_id, Board board) {
@@ -45,27 +52,24 @@ public class Info {
         response_string += "Final board state:\n";
         response_string += board.toString();
 
-        return Response.ok(response_string).build();
+        return Response.ok(jsonWrap(response_string)).build();
     }
 
-    public static String wrapBoard(String board, String[] users) {
+    public static String wrapBoard(String board, String[] users, int value) {
         String user_name1 = Users.getUserName(users[0]);
         String user_name2 = Users.getUserName(users[1]);
 
-        return "Current Board State:\n" +
+        return jsonWrap("Current Board State:\n" +
                 user_name1 + " vs. " + user_name2 + "\n" +
-                "Next move: " + user_name1 + "\n" +
-                board.toString();
+                "Next move: " + user_name1 + " (" + Board.getLetter(value) + ") \n" +
+                board.toString());
     }
 
-    public static JsonObject wrapForfeit(String board, String winner) {
+    public static String wrapForfeit(String board, String winner) {
         String user_name = Users.getUserName(winner);
 
-        JsonObject jsonBoard = Json.createObjectBuilder()
-                .add("text", user_name + " wins! (forfeit)\n" +
-                        "Last state of board:\n")
-                .add("text", board).build();
-
-        return jsonBoard;
+        return jsonWrap(user_name + " wins! (forfeit)\n" +
+                        "Last state of board:\n" +
+                        board.toString());
     }
 }

@@ -47,7 +47,7 @@ public class Board {
         return false;
     }
 
-    public char getLetter(int square_value) {
+    public static char getLetter(int square_value) {
         switch(square_value) {
             case -1: return 'X';
             case 1: return 'O';

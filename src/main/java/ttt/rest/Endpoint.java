@@ -68,7 +68,7 @@ public class Endpoint {
             return Core.move(payload);
         }
 
-        return Response.ok("Not a valid command.\n" +
-            "Enter /ttt help for a list of commands.").build();
+        return Response.ok(Info.jsonWrap("Not a valid command.\n" +
+            "Enter /ttt help for a list of commands.")).build();
     }
 }
